@@ -1,0 +1,2 @@
+from .auth import {{classname}}Auth
+from .service import {{classname}}Service
