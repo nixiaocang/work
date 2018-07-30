@@ -38,3 +38,15 @@ def oauthcallback():
 @_auth.route('/tokenRelease', methods=["GET"])
 def release():
     raise NotImplementedError
+
+@_auth.route('/sogou/conn', methods=["GET"])
+def conn():
+    try:
+        state = uuid.uuid4()
+        username, password, token = request.args.get('username'), request.args.get('password'), request.args.get('token')
+        response = DatasourceAuth(state=state).conn(username, password, token)
+        status_code = HttpStatusCode.HTTP_200_OK \
+            if response.get('code') in [ResponseCode.ok] else HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
+    except Exception as e:
+        return jsonify(BaseError(msg=str(e)).object_repr), HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
+    return jsonify(response), status_code
