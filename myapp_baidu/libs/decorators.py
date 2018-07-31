@@ -1,0 +1,56 @@
+import traceback
+from functools import wraps
+from myapp_baidu.libs.const import ResponseCode as responseCode, InternalErrorMessage as errorMsg
+from myapp_baidu.libs.exceptions import BaseError
+
+
+def AuthResponse(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            response = func(*args, **kwargs)
+            response.update({
+                'code': responseCode.ok
+                , 'msg': None
+                , 'debugMsg': None
+            })
+            return response
+        except BaseError as error:
+            return {
+                'code': error.code
+                , 'msg': error.msg
+                , 'debugMsg': error.debug_msg
+            }
+        except Exception:
+            return {
+                'code': responseCode.error
+                , 'msg': errorMsg.BASE_Error_MSG
+                , 'debugMsg': traceback.format_exc()
+            }
+    return wrapper
+
+
+def ServiceResponse(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            response = func(*args, **kwargs)
+            response.update({
+                'code': responseCode.ok
+                , 'msg': None
+                , 'debugMsg': None
+            })
+            return response
+        except BaseError as error:
+            return {
+                'code': error.code
+                , 'msg': error.msg
+                , 'debugMsg': error.debug_msg
+            }
+        except Exception:
+            return {
+                'code': responseCode.error
+                , 'msg': errorMsg.BASE_Error_MSG
+                , 'debugMsg': traceback.format_exc()
+            }
+    return wrapper
