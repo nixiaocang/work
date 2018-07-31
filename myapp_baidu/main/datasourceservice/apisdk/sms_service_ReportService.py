@@ -1,5 +1,5 @@
 #coding=utf-8
-from ApiSDKJsonClient import *
+from myapp_baidu.main.datasourceservice.apisdk.ApiSDKJsonClient import *
 
 
 class sms_service_ReportService(ApiSDKJsonClient):
@@ -51,5 +51,5 @@ if __name__=='__main__':
             'reportId':'9b09b5404dc2883cd76a5c438b3bf3c3'
             }
     res = test.getReportFileUrl(getReportFileUrlRequest)
-    print res
+    print(res)
 

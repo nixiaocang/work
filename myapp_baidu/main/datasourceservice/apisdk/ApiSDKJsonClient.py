@@ -1,9 +1,8 @@
 #coding=utf-8
 import json
 import requests
-from AuthHeader import *
-from JsonEnvelop import *
-import ConfigParser
+from myapp_baidu.main.datasourceservice.apisdk.AuthHeader import *
+from myapp_baidu.main.datasourceservice.apisdk.JsonEnvelop import *
 import traceback as tb
 
 '''
@@ -30,43 +29,12 @@ class ApiSDKJsonClient():
                 request = {}
             jsonEnv = JsonEnvelop(header,request)
             jsonStr=json.dumps(jsonEnv, default=convert_to_builtin_type, skipkeys=True)
-            print jsonStr
             headers = {'content-type': 'application/json;charset=utf-8'}
             r = requests.post(url,data=jsonStr,headers=headers)
             return r.json()
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             tb.print_exc()
-
-'''
-    print response result
-'''
-def printJsonResponse(res):
-        resheader = res["header"]
-        resbody = res["body"]
-        failures = resheader["failures"]
-        print "Response Header=>"
-        print "Execution result: \t", resheader["desc"]
-        print "      operations: \t", resheader["oprs"]
-        print "  operation time: \t", resheader["oprtime"]
-        if (resheader["quota"] is not None):
-            print "   consume quota: \t", resheader["quota"]
-
-        if (resheader["rquota"] is not None):
-            print "    remain quota: \t", resheader["rquota"]
-
-        print "          status: \t", resheader["status"]
-        if failures is not None:
-            for failure in failures:
-                print "            code: \t", failure["code"]
-                print "         message: \t", failure["message"]
-                print "        position: \t", failure["position"]
-        print "Response Body=>"
-        if resbody is not None:
-            jsonStr=json.dumps(resbody, default=convert_to_builtin_type, skipkeys=True)
-            print jsonStr
-
-
 
 
 

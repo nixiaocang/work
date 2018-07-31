@@ -2,6 +2,7 @@ from flask import jsonify, Blueprint, request
 from myapp_baidu.libs.exceptions import BaseError
 from myapp_baidu.libs.const import HttpStatusCode, ResponseCode
 from myapp_baidu.main.datasourceservice import DatasourceService
+import json
 
 _service = Blueprint('service', __name__)
 
@@ -71,9 +72,8 @@ def fetch():
 @_service.route('/saas/baidu/plan', methods=["POST"])
 def get_plan_data():
     try:
-        data_request_param = request.json
-        print(request.json)
-        print(request.args)
+        data = str(request.data, encoding='utf-8')
+        data_request_param = json.loads(data)
         response = DatasourceService(token_process_info=None).get_plan_data(data_request_param)
         status_code = HttpStatusCode.HTTP_200_OK \
                 if response.get('code') in [ResponseCode.ok] else HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR

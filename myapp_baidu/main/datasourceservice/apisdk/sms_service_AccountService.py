@@ -1,5 +1,5 @@
 #coding=utf-8
-from ApiSDKJsonClient import *
+from myapp_baidu.main.datasourceservice.apisdk.ApiSDKJsonClient import *
 
 
 class sms_service_AccountService(ApiSDKJsonClient):

@@ -8,7 +8,7 @@ class DatasourceService(object):
 
     def __init__(self, token_process_info):
         self._token_process_info = token_process_info
-        self._credentials = self._get_credentials(token_process_info)
+        #self._credentials = self._get_credentials(token_process_info)
         super(DatasourceService, self).__init__()
 
     @property
@@ -85,9 +85,17 @@ class DatasourceService(object):
         password = data_request_param.get('password')
         token = data_request_param.get('token')
         if not (username and password and token):
-            pass
-        yesterday = datetime.datetime.today()-datetime.timedelay(days=1)
+            raise Exception('缺少用户信息参数')
+        yesterday = datetime.datetime.today()-datetime.timedelta(days=1)
         yesterday = str(yesterday)[:10]
         startDate = data_request_param.get('startDate', yesterday)
         endDate = data_request_param.get('endDate', yesterday)
-        return PlanReport(username, password, token).get_data(startDate, endDate)
+        print(data_request_param)
+        if endDate < startDate:
+            raise Exception('日期不合法')
+        try:
+            data = PlanReport(username, password, token).get_data(startDate, endDate)
+        except Exception as e:
+            print(e)
+            raise e
+        return {'code':'SUCCESS', 'data':data}

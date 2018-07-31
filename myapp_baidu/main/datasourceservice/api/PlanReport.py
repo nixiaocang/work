@@ -2,6 +2,7 @@
 import time
 import json
 import pandas as pd
+import requests
 from myapp_baidu.main.datasourceservice.apisdk.sms_service_ReportService import sms_service_ReportService
 
 class PlanReport(sms_service_ReportService):
@@ -22,16 +23,17 @@ class PlanReport(sms_service_ReportService):
                             }
         # 分设备获取
         # device = 1 PC  device=2 移动
+        bag = {}
         for device in (1, 2):
             getProfessionalReportIdRequest['device'] = device
-            pres = test.getProfessionalReportId(getProfessionalReportIdRequest)
+            pres = self.getProfessionalReportId(getProfessionalReportIdRequest)
             preportId = pres['body']['data'][0]['reportId']
             count = 0
             report_param = {
                 'reportId':preportId
                 }
             while count < 3:
-                psres = test.getReportState(report_param)
+                psres = self.getReportState(report_param)
                 pstatus = psres['body']['data'][0]['isGenerated']
                 if pstatus != 3:
                     time.sleep(5)
@@ -40,20 +42,25 @@ class PlanReport(sms_service_ReportService):
                         raise Exception('报告获取失败')
                 else:
                     break
-            pures = test.getReportFileUrl(report_param)
+            pures = self.getReportFileUrl(report_param)
             purl = pures['body']['data'][0]['reportFilePath']
-            res = requests.get(url)
-            with open("/tmp/%s_%s.csv" % (reportId, device), "wb") as code:
+            res = requests.get(purl)
+            with open("/tmp/%s_%s.csv" % (preportId, device), "wb") as code:
                 code.write(res.content)
-        df1 = pd.read_csv('/tmp/%s_1.csv' % reportId, sep='\t', encoding='gbk')
-        df1['设备'] = '计算机'
-        df1['推广渠道'] = '百度推广'
-        df2 = pd.read_csv('/tmp/%s_2.csv' % reportId, sep='\t', encoding='gbk')
-        df2['设备'] = '移动'
-        df2['推广渠道'] = '百度推广'
-        fres = pd.concat(df1,df2)
-        fjosn = pd.to_json(orient='records')
+            bag[device] = pd.read_csv('/tmp/%s_%s.csv' % (preportId, device), sep='\t', encoding='gbk')
+
+        df1 = bag[1]
+        df2 = bag[2]
+        if not df1.empty:
+            df1['设备'] = '计算机'
+            df1['推广渠道'] = '百度推广'
+        if not df2.empty:
+            df2['设备'] = '移动'
+            df2['推广渠道'] = '百度推广'
+        fres = pd.concat([df1,df2])
+        fjosn = fres.to_json(orient='records')
         data = json.loads(fjosn)
+        print(len(data))
         return data
 
 if __name__=='__main__':
@@ -61,4 +68,4 @@ if __name__=='__main__':
     password = 'H7i9H0'
     token = '764cc17aa8f1094457a3016c7161e05d'
     data = PlanReport(username, password, token)
-    print len(data)
+    print(len(data))
