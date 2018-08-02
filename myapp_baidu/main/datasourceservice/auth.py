@@ -1,5 +1,7 @@
 from myapp_baidu.libs.exceptions import *
 from myapp_baidu.libs.decorators import AuthResponse
+from myapp_baidu.main.datasourceservice.apisdk.sms_service_AccountService import sms_service_AccountService
+import json
 
 
 class DatasourceAuth(object):
@@ -65,3 +67,26 @@ class DatasourceAuth(object):
         :return: Boolean
         """
         raise NotImplementedError
+
+    @AuthResponse
+    def oauth_operate(self, data):
+        try:
+            conn = sms_service_AccountService(data['username'], data['password'], data['token'])
+            getAccountInfoRequest = {
+                "accountFields": ["userId"]
+                }
+            res = conn.getAccountInfo(getAccountInfoRequest)
+            status = res['header']['status']
+            if status != 0:
+                raise Exception("用户信息错误")
+        except Exception as e:
+            raise e
+        data = {
+                "uniqueId": None,
+                "account": data['username'],
+                "instanceTokenData": json.dumps(data, ensure_ascii=False)
+                }
+        return data
+
+
+

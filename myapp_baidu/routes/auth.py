@@ -1,4 +1,5 @@
 import uuid
+import json
 from flask import Blueprint, request, jsonify
 from flask import current_app as app
 from myapp_baidu.main.datasourceservice import DatasourceAuth
@@ -38,3 +39,15 @@ def oauthcallback():
 @_auth.route('/tokenRelease', methods=["GET"])
 def release():
     raise NotImplementedError
+
+@_auth.route('/authOperate', methods=["POST"])
+def oauthoperate():
+    try:
+        data = str(request.data, encoding='utf-8')
+        data = json.loads(data)
+        response = DatasourceAuth(state=None).oauth_operate(data)
+        status_code = HttpStatusCode.HTTP_200_OK \
+        if response.get('code') in [ResponseCode.ok] else HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
+    except Exception as e:
+        return jsonify(BaseError(str(e)).object_repr), HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
+    return jsonify(response), status_code

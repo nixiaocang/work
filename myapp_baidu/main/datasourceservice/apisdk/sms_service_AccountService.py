@@ -26,7 +26,7 @@ if __name__=='__main__':
             "accountFields": ["userId","cost","balance"]
             }
     res = test.getAccountInfo(getAccountInfoRequest)
-    print res
+    print(res)
 
 
 
