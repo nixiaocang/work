@@ -43,9 +43,8 @@ def release():
 @_auth.route('/authOperate', methods=["POST"])
 def oauthoperate():
     try:
-        data = str(request.data, encoding='utf-8')
-        data = json.loads(data)
-        response = DatasourceAuth(state=None).oauth_operate(data)
+        data_request_param = request.json
+        response = DatasourceAuth(state=None).oauth_operate(data_request_param)
         status_code = HttpStatusCode.HTTP_200_OK \
         if response.get('code') in [ResponseCode.ok] else HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
     except Exception as e:

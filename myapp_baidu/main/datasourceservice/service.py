@@ -2,13 +2,18 @@ from myapp_baidu.libs.exceptions import *
 from myapp_baidu.libs.decorators import ServiceResponse
 from myapp_baidu.main.datasourceservice.api.PlanReport import PlanReport
 import datetime
+import json
 
+
+class_map = {
+        "plan":PlanReport,
+        }
 
 class DatasourceService(object):
 
     def __init__(self, token_process_info):
         self._token_process_info = token_process_info
-        #self._credentials = self._get_credentials(token_process_info)
+        self._credentials = self._get_credentials(token_process_info)
         super(DatasourceService, self).__init__()
 
     @property
@@ -36,7 +41,10 @@ class DatasourceService(object):
         token validity in this method, if you do so, you may refresh the token and update the token_process_info
         when the token is invalid.
         """
-        raise NotImplementedError
+        print(args)
+        instanceTokenData = args[0]["instanceTokenData"]
+        info = json.loads(instanceTokenData)
+        return info
 
     @ServiceResponse(token_process_info)
     def get_profiles(self):
@@ -75,7 +83,32 @@ class DatasourceService(object):
         raise NotImplementedError
 
     def read_data(self, data_request_param):
-        raise NotImplementedError
+        username = self._credentials.get("username")
+        password = self._credentials.get("password")
+        token = self._credentials.get("token")
+        if not (username and password and token):
+            raise Exception('缺少用户信息参数')
+        yesterday = datetime.datetime.today()-datetime.timedelta(days=1)
+        yesterday = str(yesterday)[:10]
+        startDate = data_request_param["dateRange"].get('startDate', yesterday)
+        endDate = data_request_param["dateRange"].get('endDate', yesterday)
+        if endDate < startDate or endDate > yesterday:
+            raise Exception('日期不合法')
+        metricList = data_request_param['metricList']
+        obj = class_map.get(data_request_param["reportId"])
+        if not obj:
+            raise Exception('不支持的报告类型')
+        try:
+            data = obj(username, password, token).get_data(startDate, endDate, metricList)
+        except Exception as e:
+            print(e)
+            raise e
+        res = {
+                "tokenProgressInfo": self._token_process_info,
+                "dataList":data
+                }
+        return res
+
 
     def read_filter_values(self, data_request_param):
         raise NotImplementedError

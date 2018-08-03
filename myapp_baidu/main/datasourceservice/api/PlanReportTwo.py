@@ -1,7 +1,6 @@
 #coding:utf-8
 import time
 import json
-import numpy as np
 import pandas as pd
 import requests
 from myapp_baidu.main.datasourceservice.apisdk.sms_service_ReportService import sms_service_ReportService
@@ -10,7 +9,7 @@ class PlanReport(sms_service_ReportService):
     def __init__(self, username, password, token):
         super(PlanReport, self).__init__(username, password, token)
 
-    def get_data(self, startDate, endDate, metricList):
+    def get_data(self, startDate, endDate):
         # get report id
         getProfessionalReportIdRequest = {
                 'reportRequestType':{
@@ -59,21 +58,9 @@ class PlanReport(sms_service_ReportService):
             df2['设备'] = '移动'
             df2['推广渠道'] = '百度推广'
         fres = pd.concat([df1,df2])
-        data = self.deal_data(fres, metricList)
+        fjosn = fres.to_json(orient='records')
+        data = json.loads(fjosn)
         print(len(data))
-        return data
-
-    def deal_data(self, fres, metricList):
-        fields = [item['id'] for item in metricList]
-        clos  =[column for column in fres]
-        print(fields)
-        print(clos)
-        if fields:
-            for k in clos:
-                if k not in fields:
-                    del fres[k]
-        fjson = fres.to_json(orient='records')
-        data = json.loads(fjson)
         return data
 
 if __name__=='__main__':
