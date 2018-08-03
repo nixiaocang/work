@@ -72,8 +72,7 @@ class PlanReport(sms_service_ReportService):
             for k in clos:
                 if k not in fields:
                     del fres[k]
-        fjson = fres.to_json(orient='records')
-        data = json.loads(fjson)
+        data = np.array(fres).tolist()
         return data
 
 if __name__=='__main__':
