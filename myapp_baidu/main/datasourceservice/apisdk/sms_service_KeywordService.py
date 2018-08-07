@@ -3,21 +3,20 @@ from myapp_baidu.main.datasourceservice.apisdk.ApiSDKJsonClient import *
 
 
 class sms_service_KeywordService(ApiSDKJsonClient):
-
-	def __init__(self):
-		ApiSDKJsonClient.__init__(self, 'KeywordService', username, password, token)
-
-	def updateWord(self, updateWordRequest=None):
-		return self.execute('updateWord', updateWordRequest)
-
-	def addWord(self, addWordRequest=None):
-		return self.execute('addWord', addWordRequest)
-
-	def deleteWord(self, deleteWordRequest=None):
-		return self.execute('deleteWord', deleteWordRequest)
-
-	def getWord(self, getWordRequest=None):
-		return self.execute('getWord', getWordRequest)
+    def __init__(self, username, password, token):
+        ApiSDKJsonClient.__init__(self, 'KeywordService', username, password, token)
+    
+    def updateWord(self, updateWordRequest=None):
+        return self.execute('updateWord', updateWordRequest)
+    
+    def addWord(self, addWordRequest=None):
+        return self.execute('addWord', addWordRequest)
+    
+    def deleteWord(self, deleteWordRequest=None):
+        return self.execute('deleteWord', deleteWordRequest)
+    
+    def getWord(self, getWordRequest=None):
+        return self.execute('getWord', getWordRequest)
 
 
 

@@ -1,12 +1,16 @@
 from myapp_baidu.libs.exceptions import *
 from myapp_baidu.libs.decorators import ServiceResponse
 from myapp_baidu.main.datasourceservice.api.PlanReport import PlanReport
+from myapp_baidu.main.datasourceservice.api.KeywordReport import KeywordReport
+from myapp_baidu.main.datasourceservice.api.KeywordInfoReport import KeywordInfoReport
 import datetime
 import json
 
 
 class_map = {
         "plan":PlanReport,
+        "keyword":KeywordReport,
+        "keywordinfo":KeywordInfoReport,
         }
 
 class DatasourceService(object):
@@ -94,7 +98,7 @@ class DatasourceService(object):
         endDate = data_request_param["dateRange"].get('endDate', yesterday)
         if endDate < startDate or endDate > yesterday:
             raise Exception('日期不合法')
-        metricList = data_request_param['metricList']
+        metricList = data_request_param.get('metricList', [])
         obj = class_map.get(data_request_param["reportId"])
         if not obj:
             raise Exception('不支持的报告类型')
