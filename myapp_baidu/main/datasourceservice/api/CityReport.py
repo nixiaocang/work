@@ -17,7 +17,7 @@ class CityReport(sms_service_ReportService):
                     'performanceData':['cost','cpc','click','impression','ctr','cpm','conversion', 'position'],
                     'startDate': startDate,
                     'endDate': startDate,
-                    'levelOfDetails':2,
+                    'levelOfDetails':3,
                     'unitOfTime':5,
                     'reportType':5
                                 }

@@ -14,7 +14,7 @@ class KeywordReport(sms_service_ReportService):
         # get report id
         getProfessionalReportIdRequest = {
                 'reportRequestType':{
-                    'performanceData':['cost','cpc','click','impression','ctr','cpm','conversion'],
+                    'performanceData':['cost','cpc','click','impression','ctr','cpm','conversion', 'position'],
                     'startDate': startDate,
                     'endDate': startDate,
                     'levelOfDetails':11,
