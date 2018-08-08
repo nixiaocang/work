@@ -14,7 +14,7 @@ def make_app(version):
 
     register_routes(app)
 
-    if hasattr(config_obj, 'EUREKA') and config_obj.EUREKA:
+    if hasattr(config_obj, 'EURAKE') and config_obj.EURAKE:
         register_eureka(config_obj)
 
     return app

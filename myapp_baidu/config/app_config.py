@@ -14,7 +14,7 @@ def load_config(version):
 
 
 class Config(object):
-    APP_NAME = 'please fullfill your app name here e.g. py-datasource-service-google-ads'
+    APP_NAME = 'baidu'
 
 
 class ConfigProduct(Config):
@@ -88,11 +88,11 @@ class ConfigDevelop(Config):
 
 class ConfigLocal(Config):
     """ eurake-service related configuration """
-    EURAKE = False
+    EURAKE = True
     PORT = '8700'
-    IP_ADDR = '192.168.3.141'
-    HOSTNAME = '192.168.3.141'
-    EUREKA_URL = 'http://ptmind:Ptmind123qwe@192.168.2.161:8010/'
+    IP_ADDR = '115.28.9.49' #'192.168.3.141'
+    HOSTNAME = '115.28.9.49' #'192.168.3.141'
+    EUREKA_URL = 'http://ptmind:Ptmind123qwe@testsource.datadeck.cn'
     # INSTANCE_ID = ''
     # HEALTH_CHECK_URL = ''
     # STATUS_PAGE_URL = ''
