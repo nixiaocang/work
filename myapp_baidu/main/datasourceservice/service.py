@@ -3,6 +3,10 @@ from myapp_baidu.libs.decorators import ServiceResponse
 from myapp_baidu.main.datasourceservice.api.PlanReport import PlanReport
 from myapp_baidu.main.datasourceservice.api.KeywordReport import KeywordReport
 from myapp_baidu.main.datasourceservice.api.KeywordInfoReport import KeywordInfoReport
+from myapp_baidu.main.datasourceservice.api.CityReport import CityReport
+from myapp_baidu.main.datasourceservice.api.CreativeReport import CreativeReport
+from myapp_baidu.main.datasourceservice.api.HistoryReport import HistoryReport
+from myapp_baidu.main.datasourceservice.api.SearchReport import SearchReport
 import datetime
 import json
 
@@ -11,6 +15,10 @@ class_map = {
         "plan":PlanReport,
         "keyword":KeywordReport,
         "keywordinfo":KeywordInfoReport,
+        "city":CityReport,
+        "creative":CreativeReport,
+        "history":HistoryReport,
+        "search":SearchReport
         }
 
 class DatasourceService(object):

@@ -43,7 +43,7 @@ class KeywordInfoReport(sms_service_KeywordService):
                     'startDate': startDate,
                     'endDate': startDate,
                     'levelOfDetails':11,
-                    'unitOfTime':7,
+                    'unitOfTime':5,
                     'reportType':14
                                 }
                             }

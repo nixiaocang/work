@@ -39,6 +39,13 @@ class ConfigProduct(Config):
     # API_SERVICE_NAME = 'webmasters'
     # API_VERSION = 'v3'
 
+    """ database config """
+    DATABASE = 'dm_shangwutong_dev'
+    USER = 'dm_shangwutong_dev_user'
+    PASSWORD = '12#$56&*YUhj'
+    HOST = '221.122.89.102'
+    PORT = "5432"
+
 
 class ConfigStaging(Config):
     """ eurake-service related configuration """
@@ -61,6 +68,13 @@ class ConfigStaging(Config):
     """ datasource-data-service related configuration """
     # API_SERVICE_NAME = 'webmasters'
     # API_VERSION = 'v3'
+
+    """ database config """
+    DATABASE = 'dm_shangwutong_dev'
+    USER = 'dm_shangwutong_dev_user'
+    PASSWORD = '12#$56&*YUhj'
+    HOST = '221.122.89.102'
+    PORT = "5432"
 
 
 class ConfigDevelop(Config):
@@ -85,10 +99,17 @@ class ConfigDevelop(Config):
     # API_SERVICE_NAME = 'webmasters'
     # API_VERSION = 'v3'
 
+    """ database config """
+    DATABASE = 'dm_shangwutong_dev'
+    USER = 'dm_shangwutong_dev_user'
+    PASSWORD = '12#$56&*YUhj'
+    HOST = '221.122.89.102'
+    PORT = "5432"
+
 
 class ConfigLocal(Config):
     """ eurake-service related configuration """
-    EURAKE = True
+    EURAKE = False
     PORT = '8700'
     IP_ADDR = '115.28.9.49' #'192.168.3.141'
     HOSTNAME = '115.28.9.49' #'192.168.3.141'
@@ -107,3 +128,10 @@ class ConfigLocal(Config):
     """ datasource-data-service related configuration """
     # API_SERVICE_NAME = 'webmasters'
     # API_VERSION = 'v3'
+
+    """ database config """
+    DATABASE = 'dm_shangwutong_dev'
+    USER = 'dm_shangwutong_dev_user'
+    PASSWORD = '12#$56&*YUhj'
+    HOST = '221.122.89.102'
+    PORT = "5432"

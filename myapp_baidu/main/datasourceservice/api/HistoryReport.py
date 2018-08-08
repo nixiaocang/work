@@ -6,20 +6,20 @@ import pandas as pd
 import requests
 from myapp_baidu.main.datasourceservice.apisdk.sms_service_ReportService import sms_service_ReportService
 
-class KeywordReport(sms_service_ReportService):
+class HistoryReport(sms_service_ReportService):
     def __init__(self, username, password, token):
-        super(KeywordReport, self).__init__(username, password, token)
+        super(HistoryReport, self).__init__(username, password, token)
 
     def get_data(self, startDate, endDate, metricList):
         # get report id
         getProfessionalReportIdRequest = {
                 'reportRequestType':{
-                    'performanceData':['cost','cpc','click','impression','ctr','cpm','conversion'],
+                    'performanceData':['rank1shows','rank2shows','rank3shows','rank4shows','rank1to4shows'],
                     'startDate': startDate,
                     'endDate': startDate,
                     'levelOfDetails':11,
                     'unitOfTime':5,
-                    'reportType':14
+                    'reportType':38
                                 }
                             }
         # 分设备获取
@@ -59,8 +59,6 @@ class KeywordReport(sms_service_ReportService):
             df2['设备'] = '移动'
             df2['推广渠道'] = '百度推广'
         fres = pd.concat([df1,df2])
-        if fres.empty:
-            return []
         fres['点击率'] = pd.to_numeric(fres['点击率'].str.split('%',expand=True)[0])/100
         data = self.deal_data(fres, metricList)
         print(len(data))
@@ -69,8 +67,8 @@ class KeywordReport(sms_service_ReportService):
     def deal_data(self, fres, metricList):
         fields = [item['id'] for item in metricList]
         clos  =[column for column in fres]
+        print(fields)
         print(clos)
-        # 把数据按照给定的类型进行转换
         if fields:
             for k in clos:
                 if k not in fields:
@@ -83,5 +81,5 @@ if __name__=='__main__':
     username = 'ptengine'
     password = 'H7i9H0'
     token = '764cc17aa8f1094457a3016c7161e05d'
-    data = KeywordReport(username, password, token)
+    data = HistoryReport(username, password, token)
     print(len(data))

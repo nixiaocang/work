@@ -1,24 +1,25 @@
 #coding:utf-8
 import time
 import json
+import numpy as np
 import pandas as pd
 import requests
 from myapp_baidu.main.datasourceservice.apisdk.sms_service_ReportService import sms_service_ReportService
 
-class PlanReport(sms_service_ReportService):
+class SearchReport(sms_service_ReportService):
     def __init__(self, username, password, token):
-        super(PlanReport, self).__init__(username, password, token)
+        super(SearchReport, self).__init__(username, password, token)
 
-    def get_data(self, startDate, endDate):
+    def get_data(self, startDate, endDate, metricList):
         # get report id
         getProfessionalReportIdRequest = {
                 'reportRequestType':{
-                    'performanceData':['cost','cpc','click','impression','ctr','cpm','conversion'],
+                    'performanceData':['cost','click','impression','ctr'],
                     'startDate': startDate,
                     'endDate': startDate,
-                    'levelOfDetails':3,
-                    'unitOfTime':7,
-                    'reportType':10
+                    'levelOfDetails':12,
+                    'unitOfTime':5,
+                    'reportType':6
                                 }
                             }
         # 分设备获取
@@ -58,14 +59,27 @@ class PlanReport(sms_service_ReportService):
             df2['设备'] = '移动'
             df2['推广渠道'] = '百度推广'
         fres = pd.concat([df1,df2])
-        fjosn = fres.to_json(orient='records')
-        data = json.loads(fjosn)
+        fres['点击率'] = pd.to_numeric(fres['点击率'].str.split('%',expand=True)[0])/100
+        data = self.deal_data(fres, metricList)
         print(len(data))
+        return data
+
+    def deal_data(self, fres, metricList):
+        fields = [item['id'] for item in metricList]
+        clos  =[column for column in fres]
+        print(fields)
+        print(clos)
+        if fields:
+            for k in clos:
+                if k not in fields:
+                    del fres[k]
+            fres = fres.ix[:,fields]
+        data = np.array(fres).tolist()
         return data
 
 if __name__=='__main__':
     username = 'ptengine'
     password = 'H7i9H0'
     token = '764cc17aa8f1094457a3016c7161e05d'
-    data = PlanReport(username, password, token)
+    data = SearchReport(username, password, token)
     print(len(data))
