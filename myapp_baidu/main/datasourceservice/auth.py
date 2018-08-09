@@ -88,5 +88,39 @@ class DatasourceAuth(object):
                 }
         return data
 
+    def auth_account(self, data):
+        code = "SUCCESS"
+        msg = None
+        try:
+            conn = sms_service_AccountService(data['account'], data['password'], data['token'])
+            getAccountInfoRequest = {
+                "accountFields": ["userId"]
+                }
+            res = conn.getAccountInfo(getAccountInfoRequest)
+            status = res['header']['status']
+            if status != 0:
+                raise Exception("用户信息错误")
+        except Exception as e:
+            code = "FAILURE"
+            msg = str(e)
+        instanceTokenData = {} if code =='FAILURE' else {
+                'account':data['account'],
+                'password':data['password'],
+                'token':data['token']
+                }
+        fres = {
+                "pt_source":data.get('pt_source'),
+                "pt_hash":data.get("pt_hash"),
+                "pt_email":data.get("pt_email"),
+                "pt_code":code,
+                "msg":msg,
+                "pt_debug_msg":msg,
+                "unique_id":None,
+                "account": data['account'],
+                "pt_instance_token_data":json.dumps(instanceTokenData, ensure_ascii=False)
+                }
+        return fres
+
+
 
 

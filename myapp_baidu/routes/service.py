@@ -69,12 +69,13 @@ def fetch():
         return jsonify(BaseError(msg=str(e)).object_repr), HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
     return jsonify(response), status_code
 
-@_service.route('/saas/baidu/plan', methods=["POST"])
-def get_plan_data():
+@_service.route('/saas/get_data', methods=["POST"])
+def get_report_data():
     try:
         data = str(request.data, encoding='utf-8')
         data_request_param = json.loads(data)
-        response = DatasourceService(token_process_info=None).get_plan_data(data_request_param)
+        token_process_info = data_request_param['author']
+        response = DatasourceService(token_process_info).get_report_data(data_request_param)
         status_code = HttpStatusCode.HTTP_200_OK \
                 if response.get('code') in [ResponseCode.ok] else HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
     except Exception as e:

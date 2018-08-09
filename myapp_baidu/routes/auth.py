@@ -50,3 +50,15 @@ def oauthoperate():
     except Exception as e:
         return jsonify(BaseError(str(e)).object_repr), HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
     return jsonify(response), status_code
+
+
+@_auth.route('/auth_account', methods=["POST"])
+def oauthaccount():
+    try:
+        data_request_param = request.json
+        response = DatasourceAuth(state=None).auth_account(data_request_param)
+        status_code = HttpStatusCode.HTTP_200_OK \
+        if response.get('pt_code') in [ResponseCode.ok] else HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
+    except Exception as e:
+        return jsonify(BaseError(str(e)).object_repr), HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
+    return jsonify(response), status_code
