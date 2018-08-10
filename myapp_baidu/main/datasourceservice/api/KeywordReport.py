@@ -36,7 +36,7 @@ class KeywordReport(sms_service_ReportService):
                 "关键词质量度": "f_keyword_quality",
                 }
 
-    def get_data(self, startDate, endDate, metricList):
+    def get_data(self, startDate, endDate, dbinfo):
         # get report id
         getProfessionalReportIdRequest = {
                 'reportRequestType':{
@@ -48,43 +48,10 @@ class KeywordReport(sms_service_ReportService):
                     'reportType':14
                                 }
                             }
-        # 分设备获取
-        # device = 1 PC  device=2 移动
-        bag = {}
-        for device in (1, 2):
-            getProfessionalReportIdRequest['device'] = device
-            pres = self.getProfessionalReportId(getProfessionalReportIdRequest)
-            preportId = pres['body']['data'][0]['reportId']
-            count = 0
-            report_param = {
-                'reportId':preportId
-                }
-            while count < 3:
-                psres = self.getReportState(report_param)
-                pstatus = psres['body']['data'][0]['isGenerated']
-                if pstatus != 3:
-                    time.sleep(5)
-                    count += 1
-                    if count == 3:
-                        raise Exception('报告获取失败')
-                else:
-                    break
-            pures = self.getReportFileUrl(report_param)
-            purl = pures['body']['data'][0]['reportFilePath']
-            res = requests.get(purl)
-            with open("/tmp/%s_%s.csv" % (preportId, device), "wb") as code:
-                code.write(res.content)
-            bag[device] = pd.read_csv('/tmp/%s_%s.csv' % (preportId, device), sep='\t', encoding='gbk')
-
-        df1 = bag[1]
-        df2 = bag[2]
-        if not df1.empty:
-            df1['设备'] = '计算机'
-        if not df2.empty:
-            df2['设备'] = '移动'
-        fres = pd.concat([df1,df2])
+        fres = self.get_report_df(getProfessionalReportIdRequest)
         if fres.empty:
             return 0
         fres['点击率'] = pd.to_numeric(fres['点击率'].str.split('%',expand=True)[0])/100
-        count = self.deal_res(fres)
+        fres['平均排名'] = pd.to_numeric(fres['平均排名'].replace('-','-1'))
+        count = self.deal_res(fres, dbinfo)
         return count

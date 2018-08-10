@@ -136,8 +136,8 @@ class DatasourceService(object):
             raise Exception('缺少用户信息参数')
         yesterday = datetime.datetime.today()-datetime.timedelta(days=1)
         yesterday = str(yesterday)[:10]
-        startDate = data_request_param.get('pt_data_retrieve_date', yesterday)
-        endDate = startDate
+        startDate = data_request_param.get('pt_data_from_date', yesterday)
+        endDate = data_request_param.get('pt_data_to_date', yesterday)
         f_task_id = random.randint(1,1000000000)
         data_request_param['f_task_id'] = f_task_id
         # 插入所需要的数据
@@ -149,7 +149,6 @@ class DatasourceService(object):
                         'f_account':username,
                         }
                 obj = class_map.get(report_type)
-                print(obj)
                 db_helper.insert(data)
                 number = obj(username, password, token).get_data(startDate, endDate, data_request_param)
                 db_helper.update_t_task_trace(number)

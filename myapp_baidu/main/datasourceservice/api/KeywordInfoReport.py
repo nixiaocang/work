@@ -8,38 +8,40 @@ from myapp_baidu.main.datasourceservice.apisdk.sms_service_ReportService import 
 from myapp_baidu.main.datasourceservice.apisdk.sms_service_KeywordService import sms_service_KeywordService
 from myapp_baidu.main.datasourceservice.apisdk.sms_service_AccountService import sms_service_AccountService
 
-fmap = {
-        "日期":"date",
-        "账户名":"account",
-        "设备":"device",
-        "关键词id":"keywordId",
-        "账户id":"account_id",
-        "计划id":"campaignId",
-        "单元id":"adgroupId",
-        "关键词":"keyword",
-        "关键词出价":"price",
-        "pc url":"pcDestinationUrl",
-        "移动url":"mobileDestinationUrl",
-        "匹配方式":"matchType",
-        "pc关键词质量度":"pcQuality",
-        "移动关键词质量度":"mobileQuality",
-        "推广渠道":"channel",
-        }
-
-class KeywordInfoReport(sms_service_KeywordService):
+class KeywordInfoReport(sms_service_ReportService):
     def __init__(self, username, password, token):
         self.username = username
         self.password = password
         self.token = token
-        self.report_obj = sms_service_ReportService(username, password, token)
+        self.table = 't_keyword'
+        self.report_obj = sms_service_KeywordService(username, password, token)
         super(KeywordInfoReport, self).__init__(username, password, token)
+        self.fmap = {
+                "f_source":"f_source",
+                "f_company_id":"f_company_id",
+                "f_email":"f_email",
+                "账户":"f_account",
+                "日期":"f_date",
+                "账户ID":"f_account_id",
+                "设备":"f_device",
+                "campaignId":"f_campaign_id",
+                "f_campaign":"f_campaign",
+                "adgroupId":"f_set_id",
+                "f_set":"f_set",
+                "keywordId":"f_keyword_id",
+                "keyword":"f_keyword",
+                "matchType":"f_matched_type",
+                "price":"f_keyword_offer_price",
+                "pcQuality":"f_keyword_quality",
+                "pcDestinationUrl":"f_pc_url",
+                "mobileDestinationUrl":"f_mobile_url",
+                }
 
-    def get_data(self, startDate, endDate, metricList):
+    def get_data(self, startDate, endDate, dbinfo):
         account_id = self.get_user_id()
-        # get report id
         getProfessionalReportIdRequest = {
                 'reportRequestType':{
-                    'performanceData':['cost','cpc','click','impression','ctr','cpm','conversion'],
+                    'performanceData':['cost','cpc','click','impression','ctr','cpm','conversion', 'position'],
                     'startDate': startDate,
                     'endDate': startDate,
                     'levelOfDetails':11,
@@ -47,40 +49,27 @@ class KeywordInfoReport(sms_service_KeywordService):
                     'reportType':14
                                 }
                             }
-        # 分设备获取
-        # device = 1 PC  device=2 移动
-        fres = []
+        df =  self.get_report_df(getProfessionalReportIdRequest)
+        if df.empty:
+            return 0
+        bag = {}
         for device in (1, 2):
-            getProfessionalReportIdRequest['device'] = device
-            pres = self.report_obj.getProfessionalReportId(getProfessionalReportIdRequest)
-            print(pres)
-            print("********")
-            preportId = pres['body']['data'][0]['reportId']
-            count = 0
-            report_param = {
-                'reportId':preportId
-                }
-            while count < 3:
-                psres = self.report_obj.getReportState(report_param)
-                pstatus = psres['body']['data'][0]['isGenerated']
-                if pstatus != 3:
-                    time.sleep(5)
-                    count += 1
-                    if count == 3:
-                        raise Exception('报告获取失败')
-                else:
-                    break
-            pures = self.report_obj.getReportFileUrl(report_param)
-            purl = pures['body']['data'][0]['reportFilePath']
-            res = requests.get(purl)
-            with open("/tmp/%s_%s.csv" % (preportId, device), "wb") as code:
-                code.write(res.content)
-            df = pd.read_csv('/tmp/%s_%s.csv' % (preportId, device), sep='\t', encoding='gbk')
-            fres += self.get_keyword_info(account_id, device, df, endDate, metricList)
-        return fres
+            str_device = '计算机' if device == 1 else '移动'
+            temp_df = df[df['设备']==str_device]
+            bag[device] = self.get_keyword_info(temp_df)
+            bag[device]['设备'] = str_device
+        df1, df2 = bag[1], bag[2]
+        fres = pd.concat([df1,df2])
+        fres['日期'] = endDate
+        fres['账户ID'] = account_id
+        fres['账户'] = self.username
+        print(fres)
+        count = self.deal_res(fres, dbinfo)
+        print(count)
+        return count
 
 
-    def get_keyword_info(self, account_id, device, df, endDate, metricList):
+    def get_keyword_info(self, df):
         keyword_id_list = np.array(df['关键词keywordID']).tolist()
         keyword_ids = list(set(keyword_id_list))
         # 分批处理
@@ -92,28 +81,13 @@ class KeywordInfoReport(sms_service_KeywordService):
         data_list = []
         for i in range(0, len(keyword_ids), 10000):
             temp = keyword_ids[i:i+10000]
+            print(len(temp))
             getWordRequest["ids"] = temp
-            tres = self.getWord(getWordRequest)
+            tres = self.report_obj.getWord(getWordRequest)
             data_list += tres['body']['data']
-        fields = [item['id'] for item in metricList]
-        if not fields:
-            fields =['adgroupId', 'keyword', 'campaignId', 'price', 'pcQuality', 'pcDestinationUrl', 'mobileQuality', 'mobileDestinationUrl', 'keywordId', 'matchType' ]
-            fields = ['单元id','关键词','计划id','关键词出价','pc关键词质量度', 'pc url', '移动关键词质量度','移动url','关键词id', '匹配方式','日期','账户名','设备','推广渠道','账户id']
-        bag = {
-                'date':endDate,
-                'account':self.username,
-                'channel':'百度推广',
-                'account_id':account_id,
-                'device': '计算机' if device == 1 else '移动'
-                }
-        data = []
-        for item in data_list:
-            idata = []
-            item.update(bag)
-            for fid in fields:
-                idata.append(item.get(fmap[fid]))
-            data.append(idata)
-        return data
+        print(len(data_list))
+        fdf = pd.read_json(json.dumps(data_list))
+        return fdf
 
     def get_user_id(self):
         test = sms_service_AccountService(self.username, self.password, self.token)

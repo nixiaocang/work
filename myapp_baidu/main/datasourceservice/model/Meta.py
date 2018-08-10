@@ -33,7 +33,7 @@ class DBModel(object):
                 'f_source':self.dbinfo['pt_source'],
                 'f_db':get_md5_string(self.dbinfo),
                 'f_started_ts':now,
-                'f_date':self.dbinfo['pt_data_retrieve_date'],
+                'f_date':self.dbinfo['pt_data_from_date'],
                 }
         bag.update(data)
         if 'f_error_msg' in data.keys():

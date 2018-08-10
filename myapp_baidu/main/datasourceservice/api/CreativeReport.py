@@ -9,9 +9,39 @@ from myapp_baidu.main.datasourceservice.apisdk.sms_service_ReportService import 
 class CreativeReport(sms_service_ReportService):
     def __init__(self, username, password, token):
         super(CreativeReport, self).__init__(username, password, token)
+        self.table = 't_creative'
+        self.fmap = {
+                "f_source":"f_source",
+                "f_company_id":"f_company_id",
+                "f_email":"f_email",
+                "账户":"f_account",
+                "日期":"f_date",
+                "账户ID":"f_account_id",
+                "推广计划ID":"f_campaign_id",
+                "推广计划":"f_campaign",
+                "推广单元ID":"f_set_id",
+                "推广单元":"f_set",
+                "创意ID":"f_creative_id",
+                "创意标题":"f_creative",
+                "关键词keywordID":"f_kkeyword_id",
+                "关键词ID":"f_keyword_id",
+                "关键词":"f_keyword",
+                "显示URL":"f_url",
+                "搜索词":"f_search_word",
+                "展现量":"f_impression_count",
+                "点击量":"f_click_count",
+                "消费":"f_cost",
+                "点击率":"f_cpc_rate",
+                "平均点击价格":"f_cpc_avg_price",
+                "千次展现消费":"f_k_cpm_cost",
+                "搜索引擎":"f_search_engine",
+                "平均排名":"f_avg_billing",
+                "设备":"f_device",
+                "创意描述1":"f_creative_memo1",
+                "创意描述2":"f_creative_memo2",
+                }
 
-    def get_data(self, startDate, endDate, metricList):
-        # get report id
+    def get_data(self, startDate, endDate, dbinfo):
         getProfessionalReportIdRequest = {
                 'reportRequestType':{
                     'performanceData':['cost','cpc','click','impression','ctr','cpm', 'position'],
@@ -22,64 +52,11 @@ class CreativeReport(sms_service_ReportService):
                     'reportType':12
                                 }
                             }
-        # 分设备获取
-        # device = 1 PC  device=2 移动
-        bag = {}
-        for device in (1, 2):
-            getProfessionalReportIdRequest['device'] = device
-            pres = self.getProfessionalReportId(getProfessionalReportIdRequest)
-            preportId = pres['body']['data'][0]['reportId']
-            count = 0
-            report_param = {
-                'reportId':preportId
-                }
-            while count < 3:
-                psres = self.getReportState(report_param)
-                pstatus = psres['body']['data'][0]['isGenerated']
-                if pstatus != 3:
-                    time.sleep(5)
-                    count += 1
-                    if count == 3:
-                        raise Exception('报告获取失败')
-                else:
-                    break
-            pures = self.getReportFileUrl(report_param)
-            purl = pures['body']['data'][0]['reportFilePath']
-            res = requests.get(purl)
-            with open("/tmp/%s_%s.csv" % (preportId, device), "wb") as code:
-                code.write(res.content)
-            bag[device] = pd.read_csv('/tmp/%s_%s.csv' % (preportId, device), sep='\t', encoding='gbk')
-
-        df1 = bag[1]
-        df2 = bag[2]
-        if not df1.empty:
-            df1['设备'] = '计算机'
-            df1['推广渠道'] = '百度推广'
-        if not df2.empty:
-            df2['设备'] = '移动'
-            df2['推广渠道'] = '百度推广'
-        fres = pd.concat([df1,df2])
+        fres = self.get_report_df(getProfessionalReportIdRequest)
+        if fres.empty:
+            return 0
         fres['点击率'] = pd.to_numeric(fres['点击率'].str.split('%',expand=True)[0])/100
-        data = self.deal_data(fres, metricList)
-        print(len(data))
-        return data
+        fres['平均排名'] = pd.to_numeric(fres['平均排名'].replace('-','-1'))
+        count = self.deal_res(fres, dbinfo)
+        return count
 
-    def deal_data(self, fres, metricList):
-        fields = [item['id'] for item in metricList]
-        clos  =[column for column in fres]
-        print(fields)
-        print(clos)
-        if fields:
-            for k in clos:
-                if k not in fields:
-                    del fres[k]
-            fres = fres.ix[:,fields]
-        data = np.array(fres).tolist()
-        return data
-
-if __name__=='__main__':
-    username = 'ptengine'
-    password = 'H7i9H0'
-    token = '764cc17aa8f1094457a3016c7161e05d'
-    data = CreativeReport(username, password, token)
-    print(len(data))
