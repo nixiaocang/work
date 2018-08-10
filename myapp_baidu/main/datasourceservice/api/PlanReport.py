@@ -25,8 +25,8 @@ class PlanReport(sms_service_ReportService):
                 "平均点击价格":"f_cpc_avg_price",
                 "千次展现消费":"f_k_cpm_cost",
                 "设备":"f_device",
-                #"推广计划ID":"f_campaign_id",
-                #"推广计划":"f_campaign",
+                "推广计划ID":"f_campaign_id",
+                "推广计划":"f_campaign",
                 #"转化(网页)":"trans",
                 #"小时":"hour",
                 }

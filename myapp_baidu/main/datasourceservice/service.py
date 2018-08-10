@@ -162,8 +162,8 @@ class DatasourceService(object):
                 db_helper.update_t_task_trace(number)
                 rlog.info("task: %s获取%s的记录更新完毕" % (f_task_id, report_type))
             except Exception as e:
-                rlog.info("task: %s获取%s的数据时出现错误:%s" % (f_task_id, report_type, str(e)))
-                runtime_logger().info(traceback.format_exc().replace("\n", "####"))
+                rlog.error("task: %s获取%s的数据时出现错误:%s" % (f_task_id, report_type, str(e)))
+                runtime_logger().error(traceback.format_exc().replace("\n", "####"))
                 code = "FAIL"
                 data['f_error_msg'] = str(e)
                 db_helper.insert(data)
