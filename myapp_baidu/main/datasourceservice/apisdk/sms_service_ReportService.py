@@ -1,5 +1,6 @@
 #coding=utf-8
 from myapp_baidu.main.datasourceservice.apisdk.ApiSDKJsonClient import *
+from myapp_baidu.main.datasourceservice.model.Meta import write_data
 
 
 class sms_service_ReportService(ApiSDKJsonClient):
@@ -24,32 +25,19 @@ class sms_service_ReportService(ApiSDKJsonClient):
 
 	def getRealTimeData(self, getRealTimeDataRequest=None):
 		return self.execute('getRealTimeData', getRealTimeDataRequest)
-
-
-
-if __name__=='__main__':
-    username = 'baidu-罗技2113872'
-    password = 'Bcda1234'
-    token = '3ac60d07196b5196c2617cc8c6243140'
-    test = sms_service_ReportService(username, password, token)
-    getProfessionalReportIdRequest = {
-            'reportRequestType':{
-            'performanceData':['cost','cpc','click','impression','ctr','cpm'],
-            'startDate':'2014-04-01',
-            'endDate':'2014-04-03',
-            'levelOfDetails':3,
-            'unitOfTime':7,
-            'reportType':10
-            }
-            }
-    #res = test.getProfessionalReportId(getProfessionalReportIdRequest)
-    getReportStateRequest = {
-            'reportId':'9b09b5404dc2883cd76a5c438b3bf3c3'
-            }
-
-    getReportFileUrlRequest = {
-            'reportId':'9b09b5404dc2883cd76a5c438b3bf3c3'
-            }
-    res = test.getReportFileUrl(getReportFileUrlRequest)
-    print(res)
+    
+    def deal_res(self, fres, dbinfo):
+        fres['f_source'] = "baidu"
+        fres['f_company_id'] = dbinfo['pt_company_id']
+        fres['f_email'] = dbinfo['pt_email']
+        cols =  [col for col in fres]
+        new_cols = []
+        for col in cols:
+            if col not in self.fmap.keys():
+                del fres[col]
+            else:
+                new_cols.append(self.fmap[col])
+        fres.columns = new_cols
+        write_data(fres, dbinfo, self.table)
+        return fres.shape[0]
 

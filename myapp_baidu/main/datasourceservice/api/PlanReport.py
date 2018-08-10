@@ -10,6 +10,7 @@ from myapp_baidu.main.datasourceservice.model.Meta import write_data
 class PlanReport(sms_service_ReportService):
     def __init__(self, username, password, token):
         super(PlanReport, self).__init__(username, password, token)
+        self.table = 't_campaign_report'
         self.fmap = {
                 "f_source":"f_source",
                 "f_company_id":"f_company_id",
@@ -80,20 +81,6 @@ class PlanReport(sms_service_ReportService):
         if fres.empty:
             return 0
         fres['点击率'] = pd.to_numeric(fres['点击率'].str.split('%',expand=True)[0])/100
-        fres['f_source'] = "baidu"
-        fres['f_company_id'] = dbinfo['pt_company_id']
-        fres['f_email'] = dbinfo['pt_email']
-        cols =  [col for col in fres]
-        new_cols = []
-        for col in cols:
-            if col not in self.fmap.keys():
-                del fres[col]
-            else:
-                new_cols.append(self.fmap[col])
-        print([col for col in fres])
-        print(new_cols)
-        print("********")
-        fres.columns = new_cols
-        write_data(fres, dbinfo, 't_campaign_report')
-        return fres.shape[0]
+        count = self.deal_res(fres)
+        return count
 
