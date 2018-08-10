@@ -42,6 +42,7 @@ class HistoryReport(sms_service_ReportService):
                 }
 
     def get_data(self, startDate, endDate, dbinfo):
+        self.task_id = dbinfo['f_task_id']
         getProfessionalReportIdRequest = {
                 'reportRequestType':{
                     'performanceData':['rank1shows','rank2shows','rank3shows','rank4shows','rank1to4shows'],

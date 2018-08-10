@@ -40,6 +40,7 @@ class SearchReport(sms_service_ReportService):
                 }
 
     def get_data(self, startDate, endDate, dbinfo):
+        self.task_id = dbinfo['f_task_id']
         # get report id
         getProfessionalReportIdRequest = {
                 'reportRequestType':{

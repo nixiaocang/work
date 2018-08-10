@@ -38,6 +38,7 @@ class KeywordInfoReport(sms_service_ReportService):
                 }
 
     def get_data(self, startDate, endDate, dbinfo):
+        self.task_id = dbinfo['f_task_id']
         account_id = self.get_user_id()
         getProfessionalReportIdRequest = {
                 'reportRequestType':{
@@ -63,9 +64,7 @@ class KeywordInfoReport(sms_service_ReportService):
         fres['日期'] = endDate
         fres['账户ID'] = account_id
         fres['账户'] = self.username
-        print(fres)
         count = self.deal_res(fres, dbinfo)
-        print(count)
         return count
 
 
@@ -81,11 +80,9 @@ class KeywordInfoReport(sms_service_ReportService):
         data_list = []
         for i in range(0, len(keyword_ids), 10000):
             temp = keyword_ids[i:i+10000]
-            print(len(temp))
             getWordRequest["ids"] = temp
             tres = self.report_obj.getWord(getWordRequest)
             data_list += tres['body']['data']
-        print(len(data_list))
         fdf = pd.read_json(json.dumps(data_list))
         return fdf
 

@@ -41,6 +41,7 @@ class CityReport(sms_service_ReportService):
                 }
 
     def get_data(self, startDate, endDate, dbinfo):
+        self.task_id = dbinfo['f_task_id']
         getProfessionalReportIdRequest = {
                 'reportRequestType':{
                     'performanceData':['cost','cpc','click','impression','ctr','cpm','conversion', 'position'],

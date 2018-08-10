@@ -3,6 +3,7 @@ import traceback
 from flask import Flask
 from eureka.client import EurekaClient, EurekaRegisterError
 from myapp_baidu.config.app_config import load_config
+from myapp_baidu.libs.logger import runtime_logger
 
 
 def make_app(version):
@@ -11,6 +12,7 @@ def make_app(version):
 
     app.config.from_object(config_obj)
     app.secret_key = os.urandom(24)
+    runtime_logger().info("服务启动.....")
 
     register_routes(app)
 

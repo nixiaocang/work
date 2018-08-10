@@ -38,14 +38,8 @@ class ConfigProduct(Config):
     """ datasource-data-service related configuration """
     # API_SERVICE_NAME = 'webmasters'
     # API_VERSION = 'v3'
-
-    """ database config """
-    DATABASE = 'dm_shangwutong_dev'
-    USER = 'dm_shangwutong_dev_user'
-    PASSWORD = '12#$56&*YUhj'
-    HOST = '221.122.89.102'
-    PORT = "5432"
-
+    LOG_PATH = 'log'
+    FILE_PATH = 'log/baidu'
 
 class ConfigStaging(Config):
     """ eurake-service related configuration """
@@ -68,13 +62,8 @@ class ConfigStaging(Config):
     """ datasource-data-service related configuration """
     # API_SERVICE_NAME = 'webmasters'
     # API_VERSION = 'v3'
-
-    """ database config """
-    DATABASE = 'dm_shangwutong_dev'
-    USER = 'dm_shangwutong_dev_user'
-    PASSWORD = '12#$56&*YUhj'
-    HOST = '221.122.89.102'
-    PORT = "5432"
+    LOG_PATH = 'log'
+    FILE_PATH = 'log/baidu'
 
 
 class ConfigDevelop(Config):
@@ -98,13 +87,8 @@ class ConfigDevelop(Config):
     """ datasource-data-service related configuration """
     # API_SERVICE_NAME = 'webmasters'
     # API_VERSION = 'v3'
-
-    """ database config """
-    DATABASE = 'dm_shangwutong_dev'
-    USER = 'dm_shangwutong_dev_user'
-    PASSWORD = '12#$56&*YUhj'
-    HOST = '221.122.89.102'
-    PORT = "5432"
+    LOG_PATH = 'log'
+    FILE_PATH = 'log/baidu'
 
 
 class ConfigLocal(Config):
@@ -128,10 +112,5 @@ class ConfigLocal(Config):
     """ datasource-data-service related configuration """
     # API_SERVICE_NAME = 'webmasters'
     # API_VERSION = 'v3'
-
-    """ database config """
-    DATABASE = 'dm_shangwutong_dev'
-    USER = 'dm_shangwutong_dev_user'
-    PASSWORD = '12#$56&*YUhj'
-    HOST = '221.122.89.102'
-    PORT = "5432"
+    LOG_PATH = 'log'
+    FILE_PATH = 'log/baidu'
