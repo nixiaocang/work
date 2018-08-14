@@ -58,11 +58,16 @@ class DBModel(object):
 def write_data(df, dbinfo, table_name):
     schema = dbinfo['pt_db_schema']
     engine = create_engine('postgresql://{user}:{password}@{host}:{port}/{database}'.format(**{'user':dbinfo['pt_db_user'], 'password':dbinfo['pt_db_pwsd'], 'host':dbinfo['pt_db_host'], 'port':dbinfo['pt_db_port'], 'database':dbinfo['pt_db_name']}))
+    con = engine.connect()
     try:
         df.to_sql(table_name, engine, index=False, if_exists='append', schema=schema)
     except Exception as e:
         print(e)
         raise e
+    finally:
+        con.close()
+        engine.dispose()
+
     return True
 
 def get_md5_string(dbinfo):

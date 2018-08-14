@@ -57,7 +57,6 @@ class DatasourceService(object):
         token validity in this method, if you do so, you may refresh the token and update the token_process_info
         when the token is invalid.
         """
-        print(args)
         instanceTokenData = args[0]
         return instanceTokenData
 
