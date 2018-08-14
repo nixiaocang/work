@@ -11,6 +11,7 @@ from myapp_baidu.main.datasourceservice.model.Meta import DBModel
 import datetime
 import random
 import json
+import time
 import traceback
 from myapp_baidu.libs.logger import runtime_logger
 
@@ -141,7 +142,7 @@ class DatasourceService(object):
         startDate = data_request_param.get('pt_data_from_date', yesterday)
         endDate = data_request_param.get('pt_data_to_date', yesterday)
         retry = data_request_param.get('pt_retry_times')
-        interval = data_request_param.get('pt_retry_times')
+        interval = data_request_param.get('pt_retry_interval')
         if not retry or not interval:
             rlog.error('缺少重试信息')
             raise Exception('缺少重试信息')
@@ -169,6 +170,7 @@ class DatasourceService(object):
                     db_helper.update_t_task_trace(number)
                     rlog.info("task: %s获取%s的记录更新完毕" % (f_task_id, report_type))
                 except Exception as e:
+                    time.sleep(interval)
                     count += 1
                     rlog.error("task: %s获取%s的数据时出现错误:%s" % (f_task_id, report_type, str(e)))
                     runtime_logger().error(traceback.format_exc().replace("\n", "####"))
