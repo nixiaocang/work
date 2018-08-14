@@ -34,6 +34,7 @@ class KeywordReport(sms_service_ReportService):
                 "设备": "f_device",
                 "匹配方式": "f_matched_type",
                 "关键词质量度": "f_keyword_quality",
+                "关键词keywordID":"f_kkeyword_id"
                 }
 
     def get_data(self, startDate, endDate, dbinfo):
