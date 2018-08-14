@@ -18,14 +18,14 @@ class DBModel(object):
         self.cursor =self.conn.cursor()
 
     def update_t_conf(self):
-        now = str(datetime.datetime.today())[:19]
+        now = str(datetime.datetime.today())
         sql = "update ptmind.t_conf set f_data_last_updated_ts=%s where f_company_id=%s"
         params = (now, self.dbinfo['pt_company_id'])
         self.cursor.execute(sql, params)
         self.conn.commit()
 
     def insert(self, data):
-        now = str(datetime.datetime.today())[:19]
+        now = str(datetime.datetime.today())
         bag = {
                 'f_task_id':self.dbinfo['f_task_id'],
                 'f_email':self.dbinfo['pt_email'],
@@ -38,14 +38,14 @@ class DBModel(object):
         bag.update(data)
         if 'f_error_msg' in data.keys():
             bag['f_error_ts'] = now
-            sql = "insert into ptmind.t_task_trace(f_task_id,f_email,f_company_id,f_source,f_db,f_table,f_account,f_started_ts,f_error_ts,f_error_msg, f_date) values (%(f_task_id)s,%(f_email)s,%(f_company_id)s,%(f_source)s,%(f_db)s,%(f_table)s,%(f_account)s,%(f_started_ts)s,%(f_error_ts)s, %(f_error_msg)s, %(f_date)s)"
+            sql = "insert into ptmind.t_task_trace(f_task_id,f_email,f_company_id,f_source,f_db,f_table,f_account,f_started_ts,f_error_ts,f_error_msg, f_date, f_tried_time) values (%(f_task_id)s,%(f_email)s,%(f_company_id)s,%(f_source)s,%(f_db)s,%(f_table)s,%(f_account)s,%(f_started_ts)s,%(f_error_ts)s, %(f_error_msg)s, %(f_date)s, %(f_tried_time)s)"
         else:
-            sql = "insert into ptmind.t_task_trace(f_task_id,f_email,f_company_id,f_source,f_db,f_table,f_account,f_started_ts, f_date) values (%(f_task_id)s,%(f_email)s,%(f_company_id)s,%(f_source)s,%(f_db)s,%(f_table)s,%(f_account)s,%(f_started_ts)s, %(f_date)s)"
+            sql = "insert into ptmind.t_task_trace(f_task_id,f_email,f_company_id,f_source,f_db,f_table,f_account,f_started_ts, f_date, f_tried_time) values (%(f_task_id)s,%(f_email)s,%(f_company_id)s,%(f_source)s,%(f_db)s,%(f_table)s,%(f_account)s,%(f_started_ts)s, %(f_date)s, %(f_tried_time)s)"
         self.cursor.execute(sql, bag)
         self.conn.commit()
 
     def update_t_task_trace(self, number):
-        now = str(datetime.datetime.today())[:19]
+        now = str(datetime.datetime.today())
         sql = "update ptmind.t_task_trace set f_ended_ts=%s , f_data_count=%s where f_company_id=%s and f_task_id=%s"
         data = (now, number, self.dbinfo['pt_company_id'], self.dbinfo['f_task_id'])
         self.cursor.execute(sql, data)

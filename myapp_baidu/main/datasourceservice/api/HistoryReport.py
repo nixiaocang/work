@@ -38,6 +38,7 @@ class HistoryReport(sms_service_ReportService):
                 "f_impr_top13":"f_impr_top13",
                 "f_impr_top_rate13":"f_impr_top_rate13",
                 "f_impr_f_impr_top_rate13":"f_impr_f_impr_top_rate13",
+                "f_impr_left18":"f_impr_left18",
                 "设备":"f_device",
                 }
 

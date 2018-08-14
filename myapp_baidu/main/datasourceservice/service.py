@@ -140,34 +140,44 @@ class DatasourceService(object):
         yesterday = str(yesterday)[:10]
         startDate = data_request_param.get('pt_data_from_date', yesterday)
         endDate = data_request_param.get('pt_data_to_date', yesterday)
+        retry = data_request_param.get('pt_retry_times')
+        interval = data_request_param.get('pt_retry_times')
+        if not retry or not interval:
+            rlog.error('缺少重试信息')
+            raise Exception('缺少重试信息')
         f_task_id = random.randint(1,1000000000)
         data_request_param['f_task_id'] = f_task_id
         # 插入所需要的数据
         db_helper = DBModel(data_request_param)
         rlog.info("task: %s 开始执行" % f_task_id)
         for report_type in data_request_param['pt_db_table']:
-            try:
-                data = {
+            count = 0
+            while count < retry:
+                try:
+                    data = {
                         'f_table':report_type,
                         'f_account':username,
+                        'f_tried_time':count+1
                         }
-                rlog.info("task: %s实例化对应的报告对象" % f_task_id)
-                obj = class_map.get(report_type)
-                rlog.info("task: %s在t_task_trace插入数据" % f_task_id)
-                db_helper.insert(data)
-                rlog.info("task: %s开始获取%s的数据" % (f_task_id, report_type))
-                number = obj(username, password, token).get_data(startDate, endDate, data_request_param)
-                rlog.info("task: %s获取%s的数据共%s条,并开始更新t_task_trace" % (f_task_id, report_type, number))
-                db_helper.update_t_task_trace(number)
-                rlog.info("task: %s获取%s的记录更新完毕" % (f_task_id, report_type))
-            except Exception as e:
-                rlog.error("task: %s获取%s的数据时出现错误:%s" % (f_task_id, report_type, str(e)))
-                runtime_logger().error(traceback.format_exc().replace("\n", "####"))
-                code = "FAIL"
-                data['f_error_msg'] = str(e)
-                db_helper.insert(data)
+                    rlog.info("task: %s实例化对应的报告对象" % f_task_id)
+                    obj = class_map.get(report_type)
+                    rlog.info("task: %s在t_task_trace插入数据" % f_task_id)
+                    db_helper.insert(data)
+                    rlog.info("task: %s开始获取%s的数据" % (f_task_id, report_type))
+                    number = obj(username, password, token).get_data(startDate, endDate, data_request_param)
+                    rlog.info("task: %s获取%s的数据共%s条,并开始更新t_task_trace" % (f_task_id, report_type, number))
+                    db_helper.update_t_task_trace(number)
+                    rlog.info("task: %s获取%s的记录更新完毕" % (f_task_id, report_type))
+                except Exception as e:
+                    count += 1
+                    rlog.error("task: %s获取%s的数据时出现错误:%s" % (f_task_id, report_type, str(e)))
+                    runtime_logger().error(traceback.format_exc().replace("\n", "####"))
+                    code = "FAIL"
+                    data['f_error_msg'] = str(e)
+                    data['f_tried_time'] = count
+                    db_helper.insert(data)
         rlog.info("task: %s 开始更新t_conf" % f_task_id)
         db_helper.update_t_conf()
         rlog.info("task: %s 执行完毕" % f_task_id)
         del db_helper
-        return {"code":code}
+        return {"code":code, 'pt_code': 'SUCCESS' if code=='SUCCESS' else 'FAILURE'}

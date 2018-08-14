@@ -92,6 +92,8 @@ class KeywordInfoReport(sms_service_ReportService):
                 "accountFields": ["userId"]
                 }
         res = test.getAccountInfo(getAccountInfoRequest)
+        if res['header']['status'] != 0:
+            raise Exception('%s' % res['header']['failures'][0]['message'])
         userId = res['body']['data'][0]['userId']
         return userId
 
