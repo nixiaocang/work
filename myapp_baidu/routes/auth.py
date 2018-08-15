@@ -1,4 +1,5 @@
 import uuid
+import time
 import json
 from flask import Blueprint, request, jsonify
 from flask import current_app as app
@@ -62,3 +63,10 @@ def oauthaccount():
     except Exception as e:
         return jsonify(BaseError(str(e)).object_repr), HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR
     return jsonify(response), status_code
+
+@_auth.route('/heartbeat', methods=["POST","GET"])
+def heartbeat():
+    response = {'ts':int(round(time.time()*1000))}
+    status_code = HttpStatusCode.HTTP_200_OK
+    return jsonify(response), status_code
+

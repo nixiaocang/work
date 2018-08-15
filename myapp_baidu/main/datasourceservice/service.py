@@ -169,6 +169,7 @@ class DatasourceService(object):
                     rlog.info("task: %s获取%s的数据共%s条,并开始更新t_task_trace" % (f_task_id, report_type, number))
                     db_helper.update_t_task_trace(number)
                     rlog.info("task: %s获取%s的记录更新完毕" % (f_task_id, report_type))
+                    break
                 except Exception as e:
                     time.sleep(interval)
                     count += 1
