@@ -53,7 +53,7 @@ class sms_service_ReportService(ApiSDKJsonClient):
             pres = self.getProfessionalReportId(getProfessionalReportIdRequest)
             self.logger.info("task:%s 开始获取工作表:%s 的%s数据,返回结果为:%s" % (self.task_id, self.table, str_device, json.dumps(pres)))
             if pres['header']['status'] != 0:
-                raise Exception('%s' % pres['header']['failures'][0]['message'])
+                raise Exception('出现异常:%s' % pres['header']['failures'][0]['message'])
 
             preportId = pres['body']['data'][0]['reportId']
             self.logger.info("task:%s 开始获取工作表:%s 的%s数据,reportId为:%s" % (self.task_id, self.table, str_device, preportId))
@@ -64,7 +64,7 @@ class sms_service_ReportService(ApiSDKJsonClient):
                     psres = self.getReportState(report_param)
                     self.logger.info("task:%s 第%s次开始获取工作表:%s 的%s数据reportId:%s 生成状态,返回结果为:%s" % (self.task_id,count, self.table, str_device, preportId, json.dumps(psres)))
                     if psres['header']['status'] != 0:
-                        raise Exception('%s' % psres['header']['failures'][0]['message'])
+                        raise Exception('出现异常:%s' % psres['header']['failures'][0]['message'])
                     pstatus = psres['body']['data'][0]['isGenerated']
                     if pstatus != 3:
                         self.logger.info("task:%s 第%s次获取reportId:%s 生成状态, 此时报告还未生成" % (self.task_id,count,preportId))
@@ -78,7 +78,7 @@ class sms_service_ReportService(ApiSDKJsonClient):
             pures = self.getReportFileUrl(report_param)
             self.logger.info("task:%s 开始获取工作表:%s 的%s数据reportId:%s 的下载链接,返回结果为:%s" % (self.task_id,self.table, str_device, preportId, json.dumps(pures)))
             if pures['header']['status'] != 0:
-                raise Exception('%s' % pures['header']['failures'][0]['message'])
+                raise Exception('出现异常:%s' % pures['header']['failures'][0]['message'])
             purl = pures['body']['data'][0]['reportFilePath']
             self.logger.info("task:%s 开始获取工作表:%s 的%s数据下载链接为:%s" % (self.task_id, self.table, str_device, purl))
             res = requests.get(purl)

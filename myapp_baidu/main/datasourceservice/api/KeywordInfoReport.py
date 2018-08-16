@@ -44,7 +44,7 @@ class KeywordInfoReport(sms_service_ReportService):
                 'reportRequestType':{
                     'performanceData':['cost','cpc','click','impression','ctr','cpm','conversion', 'position'],
                     'startDate': startDate,
-                    'endDate': startDate,
+                    'endDate': endDate,
                     'levelOfDetails':11,
                     'unitOfTime':5,
                     'reportType':14

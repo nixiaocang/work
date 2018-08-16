@@ -46,7 +46,7 @@ class SearchReport(sms_service_ReportService):
                 'reportRequestType':{
                     'performanceData':['cost','click','impression','ctr'],
                     'startDate': startDate,
-                    'endDate': startDate,
+                    'endDate': endDate,
                     'levelOfDetails':12,
                     'unitOfTime':5,
                     'reportType':6

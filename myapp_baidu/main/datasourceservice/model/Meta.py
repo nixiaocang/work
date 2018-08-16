@@ -33,15 +33,16 @@ class DBModel(object):
                 'f_source':self.dbinfo['pt_source'],
                 'f_db':get_md5_string(self.dbinfo),
                 'f_started_ts':now,
-                'f_date':self.dbinfo['pt_data_from_date'],
+                'f_date_from':self.dbinfo['pt_data_from_date'],
+                'f_date_to':self.dbinfo['pt_data_to_date'],
                 }
         schema = self.dbinfo['pt_db_schema']
         bag.update(data)
         if 'f_error_msg' in data.keys():
             bag['f_error_ts'] = now
-            sql = "insert into " + schema + ".t_task_trace(f_task_id,f_email,f_company_id,f_source,f_db,f_table,f_account,f_started_ts,f_error_ts,f_error_msg, f_date, f_tried_time) values (%(f_task_id)s,%(f_email)s,%(f_company_id)s,%(f_source)s,%(f_db)s,%(f_table)s,%(f_account)s,%(f_started_ts)s,%(f_error_ts)s, %(f_error_msg)s, %(f_date)s, %(f_tried_time)s)"
+            sql = "insert into " + schema + ".t_task_trace(f_task_id,f_email,f_company_id,f_source,f_db,f_table,f_account,f_started_ts,f_error_ts,f_error_msg, f_date_from, f_date_to, f_tried_time) values (%(f_task_id)s,%(f_email)s,%(f_company_id)s,%(f_source)s,%(f_db)s,%(f_table)s,%(f_account)s,%(f_started_ts)s,%(f_error_ts)s, %(f_error_msg)s, %(f_date_from)s, %(f_date_to)s, %(f_tried_time)s)"
         else:
-            sql = "insert into " + schema + ".t_task_trace(f_task_id,f_email,f_company_id,f_source,f_db,f_table,f_account,f_started_ts, f_date, f_tried_time) values (%(f_task_id)s,%(f_email)s,%(f_company_id)s,%(f_source)s,%(f_db)s,%(f_table)s,%(f_account)s,%(f_started_ts)s, %(f_date)s, %(f_tried_time)s)"
+            sql = "insert into " + schema + ".t_task_trace(f_task_id,f_email,f_company_id,f_source,f_db,f_table,f_account,f_started_ts, f_date_from, f_date_to, f_tried_time) values (%(f_task_id)s,%(f_email)s,%(f_company_id)s,%(f_source)s,%(f_db)s,%(f_table)s,%(f_account)s,%(f_started_ts)s, %(f_date_from)s, %(f_date_to)s, %(f_tried_time)s)"
         self.cursor.execute(sql, bag)
         self.conn.commit()
 

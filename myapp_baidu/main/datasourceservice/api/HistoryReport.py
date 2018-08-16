@@ -48,7 +48,7 @@ class HistoryReport(sms_service_ReportService):
                 'reportRequestType':{
                     'performanceData':['rank1shows','rank2shows','rank3shows','rank4shows','rank1to4shows'],
                     'startDate': startDate,
-                    'endDate': startDate,
+                    'endDate': endDate,
                     'levelOfDetails':11,
                     'unitOfTime':5,
                     'reportType':38

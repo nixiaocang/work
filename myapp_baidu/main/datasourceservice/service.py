@@ -174,7 +174,7 @@ class DatasourceService(object):
                     time.sleep(interval)
                     count += 1
                     rlog.error("task: %s获取%s的数据时出现错误:%s" % (f_task_id, report_type, str(e)))
-                    runtime_logger().error(traceback.format_exc().replace("\n", "####"))
+                    runtime_logger().error("task:%s, %s" % (f_task_id, traceback.format_exc().replace("\n", "####")))
                     code = "FAIL"
                     data['f_error_msg'] = str(e)
                     data['f_tried_time'] = count
