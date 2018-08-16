@@ -46,10 +46,10 @@ class DBModel(object):
         self.cursor.execute(sql, bag)
         self.conn.commit()
 
-    def update_t_task_trace(self, number):
+    def update_t_task_trace(self, number, table):
         now = str(datetime.datetime.today())
-        sql = "update ptmind.t_task_trace set f_ended_ts=%s , f_data_count=%s where f_company_id=%s and f_task_id=%s"
-        data = (now, number, self.dbinfo['pt_company_id'], self.dbinfo['f_task_id'])
+        sql = "update ptmind.t_task_trace set f_ended_ts=%s , f_data_count=%s where f_company_id=%s and f_task_id=%s and f_table=%s"
+        data = (now, number, self.dbinfo['pt_company_id'], self.dbinfo['f_task_id'], table)
         self.cursor.execute(sql, data)
         self.conn.commit()
 
