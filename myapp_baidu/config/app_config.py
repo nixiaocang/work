@@ -40,6 +40,13 @@ class ConfigProduct(Config):
     # API_VERSION = 'v3'
     LOG_PATH = 'log'
     FILE_PATH = 'log/baidu'
+    DB_HOST = ""
+    DB_PORT = ""
+    DB_DATABASE = ""
+    DB_USER = ""
+    DB_PASS = ""
+    DB_SCHEMA = ""
+    DB_TABLE = ""
 
 class ConfigStaging(Config):
     """ eurake-service related configuration """
@@ -64,6 +71,13 @@ class ConfigStaging(Config):
     # API_VERSION = 'v3'
     LOG_PATH = 'log'
     FILE_PATH = 'log/baidu'
+    DB_HOST = ""
+    DB_PORT = ""
+    DB_DATABASE = ""
+    DB_USER = ""
+    DB_PASS = ""
+    DB_SCHEMA = ""
+    DB_TABLE = ""
 
 
 class ConfigDevelop(Config):
@@ -89,6 +103,13 @@ class ConfigDevelop(Config):
     # API_VERSION = 'v3'
     LOG_PATH = 'log'
     FILE_PATH = 'log/baidu'
+    DB_HOST = ""
+    DB_PORT = ""
+    DB_DATABASE = ""
+    DB_USER = ""
+    DB_PASS = ""
+    DB_SCHEMA = ""
+    DB_TABLE = ""
 
 
 class ConfigLocal(Config):
@@ -114,3 +135,13 @@ class ConfigLocal(Config):
     # API_VERSION = 'v3'
     LOG_PATH = 'log'
     FILE_PATH = 'log/baidu'
+    DB_HOST = '221.122.89.102'
+    DB_PORT = 5432
+    DB_DATABASE = 'pt_roi_conf'
+    DB_USER = 'pt_roi_conf_user'
+    DB_PASS = '98#$56&*YU3hj'
+    DB_SCHEMA = 'ptmind'
+    DB_TABLE = 't_conf'
+
+
+

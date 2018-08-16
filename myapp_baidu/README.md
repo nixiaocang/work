@@ -39,3 +39,18 @@ cd $project
 * grep task_id baidu_runtime.log
 * 会显示出本次任务执行的全部日志记录
 * 相应的错误堆栈信息也会显示出来
+
+###t_conf数据库配置,请自行配置
+```
+$project/myapp_baidu/config/app_config.py
+
+DB_HOST =
+DB_PORT =
+DB_DATABASE =
+DB_USER =
+DB_PASS =
+DB_SCHEMA =
+DB_TABLE =
+
+```
+
