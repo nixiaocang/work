@@ -28,7 +28,7 @@ class PlanReport(sms_service_ReportService):
                 "推广计划ID":"f_campaign_id",
                 "推广计划":"f_campaign",
                 #"转化(网页)":"trans",
-                #"小时":"hour",
+                #"小时":"f_time",
                 }
 
     def get_data(self, startDate, endDate, dbinfo):
@@ -48,6 +48,12 @@ class PlanReport(sms_service_ReportService):
         if fres.empty:
             return 0
         fres['点击率'] = pd.to_numeric(fres['点击率'].str.split('%',expand=True)[0])/100
+        df1 = fres[fres['小时'] > 9]
+        df2 = fres[fres['小时'] <=9]
+        df1['日期'] = df1['日期'].map(str) + ' ' + df1['小时'].map(str) + ':00:00'
+        df2['日期'] = df2['日期'].map(str) + ' 0' + df2['小时'].map(str) + ':00:00'
+        fres = pd.concat([df1, df2])
+
         count = self.deal_res(fres, dbinfo)
         return count
 

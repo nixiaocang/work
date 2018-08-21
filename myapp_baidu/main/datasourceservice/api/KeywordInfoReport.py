@@ -35,6 +35,7 @@ class KeywordInfoReport(sms_service_ReportService):
                 "pcQuality":"f_keyword_quality",
                 "pcDestinationUrl":"f_pc_url",
                 "mobileDestinationUrl":"f_mobile_url",
+                "mobileQuality":"f_keyword_app_quality",
                 }
 
     def get_data(self, startDate, endDate, dbinfo):
