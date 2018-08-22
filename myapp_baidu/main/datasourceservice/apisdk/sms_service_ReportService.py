@@ -93,6 +93,7 @@ class sms_service_ReportService(ApiSDKJsonClient):
         return fres
 
     def deal_res(self, fres, dbinfo):
+        fres = fres.fillna("-")
         fres['f_source'] = "baidu"
         fres['f_company_id'] = dbinfo['pt_company_id']
         fres['f_email'] = dbinfo['pt_email']

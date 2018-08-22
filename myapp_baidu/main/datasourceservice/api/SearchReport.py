@@ -56,7 +56,6 @@ class SearchReport(sms_service_ReportService):
         if fres.empty:
             return 0
         fres['点击率'] = pd.to_numeric(fres['点击率'].str.split('%',expand=True)[0])/100
-        fres = fres.fillna("-")
         count = self.deal_res(fres, dbinfo)
         return count
 
