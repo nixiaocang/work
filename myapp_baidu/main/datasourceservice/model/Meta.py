@@ -17,15 +17,6 @@ class DBModel(object):
             raise Exception("数据库:%s连接失败" % dbinfo['pt_db_name'])
         self.cursor =self.conn.cursor()
 
-    def update_t_conf(self):
-        now = str(datetime.datetime.today())
-        schema = self.dbinfo['pt_db_schema']
-        table = self.dbinfo['table']
-        sql = "update " + schema + "." + table + " set f_data_last_updated_ts=%s where f_company_id=%s"
-        params = (now, self.dbinfo['pt_company_id'])
-        self.cursor.execute(sql, params)
-        self.conn.commit()
-
     def insert(self, data):
         now = str(datetime.datetime.today())
         bag = {
@@ -51,7 +42,7 @@ class DBModel(object):
     def update_t_task_trace(self, number, table):
         now = str(datetime.datetime.today())
         schema = self.dbinfo['pt_db_schema']
-        sql = "update " + schema + ".t_task_trace set f_ended_ts=%s , f_data_count=%s where f_company_id=%s and f_task_id=%s and f_table=%s"
+        sql = "update " + schema + ".t_task_trace set f_ended_ts=%s , f_data_count=%s where f_company_id=%s and f_task_id=%s and f_table=%s and f_error_msg is NULL"
         data = (now, number, self.dbinfo['pt_company_id'], self.dbinfo['f_task_id'], table)
         self.cursor.execute(sql, data)
         self.conn.commit()

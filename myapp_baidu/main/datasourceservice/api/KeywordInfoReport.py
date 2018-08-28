@@ -21,7 +21,7 @@ class KeywordInfoReport(sms_service_ReportService):
                 "f_company_id":"f_company_id",
                 "f_email":"f_email",
                 "账户":"f_account",
-                "日期":"f_date",
+                "f_date":"f_date",
                 "账户ID":"f_account_id",
                 "设备":"f_device",
                 "campaignId":"f_campaign_id",
@@ -54,36 +54,45 @@ class KeywordInfoReport(sms_service_ReportService):
         df =  self.get_report_df(getProfessionalReportIdRequest)
         if df.empty:
             return 0
+        dates = pd.date_range(startDate, endDate)
+        date_list = [str(item.date()) for item in dates]
         bag = {}
         for device in (1, 2):
             str_device = '计算机' if device == 1 else '移动'
             temp_df = df[df['设备']==str_device]
-            bag[device] = self.get_keyword_info(temp_df)
+            bag[device] = self.get_keyword_info(temp_df, date_list)
             bag[device]['设备'] = str_device
         df1, df2 = bag[1], bag[2]
         fres = pd.concat([df1,df2])
-        fres['日期'] = endDate
         fres['账户ID'] = account_id
         fres['账户'] = self.username
         count = self.deal_res(fres, dbinfo)
         return count
 
 
-    def get_keyword_info(self, df):
-        keyword_id_list = np.array(df['关键词keywordID']).tolist()
-        keyword_ids = list(set(keyword_id_list))
-        # 分批处理
-        getWordRequest = {
+    def get_keyword_info(self, df, date_list):
+        bag = {}
+        data_list = []
+        for date in date_list:
+            tdf = df[df['日期']==date]
+            if tdf.empty:
+                continue
+            keyword_id_list = np.array(tdf['关键词keywordID']).tolist()
+            keyword_ids = list(set(keyword_id_list))
+            # 分批处理
+            getWordRequest = {
                 "wordFields":["keywordId","keyword","adgroupId", "campaignId", "price", "pcDestinationUrl", "mobileDestinationUrl", "matchType", "pcQuality", "mobileQuality"],
                 "idType":11,
                 "getTemp":0,
                             }
-        data_list = []
-        for i in range(0, len(keyword_ids), 10000):
-            temp = keyword_ids[i:i+10000]
-            getWordRequest["ids"] = temp
-            tres = self.report_obj.getWord(getWordRequest)
-            data_list += tres['body']['data']
+            for i in range(0, len(keyword_ids), 10000):
+                temp = keyword_ids[i:i+10000]
+                getWordRequest["ids"] = temp
+                tres = self.report_obj.getWord(getWordRequest)
+                tdata = tres['body']['data']
+                for itd in tdata:
+                    itd['f_date'] = date
+                data_list += tdata
         fdf = pd.read_json(json.dumps(data_list))
         return fdf
 

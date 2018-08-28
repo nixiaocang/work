@@ -15,19 +15,6 @@ import os
 import time
 import traceback
 from myapp_baidu.libs.logger import runtime_logger
-from myapp_baidu.config.app_config import load_config
-version=os.environ.get('ENV', 'Local')
-config_obj = load_config(version)
-config_info = {
-        'pt_db_name':config_obj.DB_DATABASE,
-        'pt_db_user':config_obj.DB_USER,
-        'pt_db_pwsd':config_obj.DB_PASS,
-        'pt_db_host':config_obj.DB_HOST,
-        'pt_db_port':config_obj.DB_PORT,
-        'pt_db_schema':config_obj.DB_SCHEMA,
-        'table':config_obj.DB_TABLE
-        }
-
 
 class_map = {
         "t_campaign_report":PlanReport,
@@ -162,8 +149,6 @@ class DatasourceService(object):
         f_task_id = random.randint(1,1000000000)
         data_request_param['f_task_id'] = f_task_id
         # 插入所需要的数据
-        config_info['pt_company_id'] = data_request_param['pt_company_id']
-        db_helper_two = DBModel(config_info)
         db_helper = DBModel(data_request_param)
         rlog.info("task: %s 开始执行" % f_task_id)
         for report_type in data_request_param['pt_db_table']:
@@ -195,8 +180,6 @@ class DatasourceService(object):
                     data['f_tried_time'] = count
                     db_helper.insert(data)
         rlog.info("task: %s 开始更新t_conf" % f_task_id)
-        db_helper_two.update_t_conf()
         rlog.info("task: %s 执行完毕" % f_task_id)
         del db_helper
-        del db_helper_two
         return {"code":code, 'pt_code': 'SUCCESS' if code=='SUCCESS' else 'FAILURE'}
